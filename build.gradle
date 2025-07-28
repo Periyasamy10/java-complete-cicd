@@ -1,0 +1,15 @@
+plugins {
+    id 'application'
+}
+
+application {
+    mainClass = 'com.demo.webapp.App'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // No external dependencies for this demo
+}
