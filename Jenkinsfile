@@ -17,12 +17,12 @@ spec:
   - name: kaniko
     image: gcr.io/kaniko-project/executor:latest
     command:
-      - /kaniko/executor
+    - /kaniko/executor
     args:
-      - "--dockerfile=/workspace/Dockerfile"
-      - "--context=dir://workspace"
-      - "--destination=docker.io/periyasamy10/java-gradle-webapp:latest"
-      - "--verbosity=info"
+    - "--dockerfile=/home/jenkins/agent/workspace/\${JOB_NAME}/Dockerfile"
+    - "--context=/home/jenkins/agent/workspace/\${JOB_NAME}"
+    - "--destination=docker.io/\${DOCKER_CREDS_USR}/java-gradle-webapp:\${BUILD_NUMBER}"
+    - "--verbosity=debug"
     volumeMounts:
     - name: kaniko-secret
       mountPath: /kaniko/.docker
@@ -63,19 +63,17 @@ spec:
       }
     }
 
-    stage('Kaniko Build & Push') {
+    stage('Build & Push Image with Kaniko') {
       steps {
         container('kaniko') {
-          script {
-            def imageTag = "myapp:${BUILD_NUMBER}"
-            sh """
-              /kaniko/executor \
-              --context=/workspace/java-complete-cicd \
-              --dockerfile=/workspace/java-complete-cicd/Dockerfile \
-              --destination=docker.io/${DOCKER_CREDS_USR}/${imageTag} \
+          sh 'echo "Kaniko is running from: $(pwd)"'
+          sh '''
+            /kaniko/executor \
+              --dockerfile=/home/jenkins/agent/workspace/$JOB_NAME/Dockerfile \
+              --context=/home/jenkins/agent/workspace/$JOB_NAME \
+              --destination=docker.io/$DOCKER_CREDS_USR/java-gradle-webapp:$BUILD_NUMBER \
               --verbosity=debug
-            """
-          }
+          '''
         }
       }
     }
