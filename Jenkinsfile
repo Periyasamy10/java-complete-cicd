@@ -17,22 +17,21 @@ spec:
   - name: kaniko
     image: gcr.io/kaniko-project/executor:latest
     command: [""]
-    args: [""]  # <-- Important to override Kaniko default entrypoint
+    args: [""]
     volumeMounts:
     - name: kaniko-secret
       mountPath: /kaniko/.docker
   volumes:
   - name: kaniko-secret
     secret:
-      secretName: regcred  # <-- This must contain Docker config.json
+      secretName: regcred
 """
     }
   }
 
   environment {
     SONAR_TOKEN = credentials('sonar-token')
-    DOCKER_CREDS_USR = credentials('docker-hub-creds').username
-    DOCKER_CREDS_PSW = credentials('docker-hub-creds').password
+    DOCKER_CREDS = credentials('docker-hub-creds')
   }
 
   stages {
@@ -66,10 +65,10 @@ spec:
             def imageTag = "myapp:${BUILD_NUMBER}"
             sh """
               /kaniko/executor \
-                --context=/workspace/java-complete-cicd \
-                --dockerfile=/workspace/java-complete-cicd/Dockerfile \
-                --destination=docker.io/${DOCKER_CREDS_USR}/${imageTag} \
-                --verbosity=debug
+              --context=/workspace/java-complete-cicd \
+              --dockerfile=/workspace/java-complete-cicd/Dockerfile \
+              --destination=docker.io/${DOCKER_CREDS_USR}/${imageTag} \
+              --verbosity=debug
             """
           }
         }
