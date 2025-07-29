@@ -21,7 +21,7 @@ spec:
     args:
       - "--dockerfile=/workspace/Dockerfile"
       - "--context=dir://workspace"
-      - "--destination=docker.io/${DOCKER_CREDS_USR}/java-gradle-webapp:latest"
+      - "--destination=docker.io/periyasamy10/java-gradle-webapp:latest"
       - "--verbosity=info"
     volumeMounts:
     - name: kaniko-secret
