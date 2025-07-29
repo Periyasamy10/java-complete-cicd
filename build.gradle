@@ -13,3 +13,16 @@ repositories {
 dependencies {
     // No external dependencies for this demo
 }
+
+plugins {
+    id "org.sonarqube" version "4.4.1.3373"
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "java-gradle-app"
+        property "sonar.projectName", "Java-app"
+        property "sonar.host.url", "http://sonarqube.sonarqube.svc.cluster.local:9000"
+        property "sonar.login", System.getenv("SONAR_TOKEN")
+    }
+}
