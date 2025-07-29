@@ -1,5 +1,6 @@
 plugins {
     id 'application'
+    id "org.sonarqube" version "4.4.1.3373"
 }
 
 application {
@@ -12,10 +13,6 @@ repositories {
 
 dependencies {
     // No external dependencies for this demo
-}
-
-plugins {
-    id "org.sonarqube" version "4.4.1.3373"
 }
 
 sonarqube {
