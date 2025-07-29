@@ -16,8 +16,6 @@ spec:
     tty: true
   - name: kaniko
     image: gcr.io/kaniko-project/executor:latest
-    command: [""]
-    args: [""]
     volumeMounts:
     - name: kaniko-secret
       mountPath: /kaniko/.docker
