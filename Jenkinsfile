@@ -16,21 +16,24 @@ spec:
     tty: true
   - name: kaniko
     image: gcr.io/kaniko-project/executor:latest
+    command: [""]
+    args: [""]  # <-- Important to override Kaniko default entrypoint
     volumeMounts:
     - name: kaniko-secret
       mountPath: /kaniko/.docker
   volumes:
   - name: kaniko-secret
     secret:
-      secretName: regcred
+      secretName: regcred  # <-- This must contain Docker config.json
 """
     }
   }
 
   environment {
-    SONAR_TOKEN = credentials('sonar-token') // Add this in Jenkins → Credentials
+    SONAR_TOKEN = credentials('sonar-token')
+    DOCKER_CREDS_USR = credentials('docker-hub-creds').username
+    DOCKER_CREDS_PSW = credentials('docker-hub-creds').password
   }
-
 
   stages {
     stage('Checkout') {
@@ -55,18 +58,7 @@ spec:
         }
       }
     }
-    
-    stage('Build') {
-      steps {
-        container('gradle') {
-          sh '''
-            chmod +x ./gradlew        
-            ./gradlew clean build
-          '''
-        }
-      }
-    }
-    
+
     stage('Kaniko Build & Push') {
       steps {
         container('kaniko') {
@@ -74,14 +66,14 @@ spec:
             def imageTag = "myapp:${BUILD_NUMBER}"
             sh """
               /kaniko/executor \
-              --context `pwd` \
-              --dockerfile `pwd`/Dockerfile \
-              --destination=${DOCKER_CREDS_USR}/${imageTag}
+                --context=/workspace/java-complete-cicd \
+                --dockerfile=/workspace/java-complete-cicd/Dockerfile \
+                --destination=docker.io/${DOCKER_CREDS_USR}/${imageTag} \
+                --verbosity=debug
             """
           }
         }
       }
     }
-    
   }
 }
