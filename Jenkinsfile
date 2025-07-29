@@ -16,6 +16,13 @@ spec:
     tty: true
   - name: kaniko
     image: gcr.io/kaniko-project/executor:latest
+    command:
+      - /kaniko/executor
+    args:
+      - "--dockerfile=/workspace/Dockerfile"
+      - "--context=dir://workspace"
+      - "--destination=docker.io/${DOCKER_CREDS_USR}/java-gradle-webapp:latest"
+      - "--verbosity=info"
     volumeMounts:
     - name: kaniko-secret
       mountPath: /kaniko/.docker
